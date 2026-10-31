@@ -1,0 +1,7 @@
+.venv/
+.claude/
+.DS_Store
+__pycache__/
+*.pdf
+*.xlsx
+*.xlsm

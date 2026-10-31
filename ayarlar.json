@@ -1,0 +1,94 @@
+{
+  "kurum": {
+    "ad": "YENİ NESİL EĞİTİM KURUMLARI"
+  },
+
+  "sinav": {
+    "ad": "MEZUN SINIF BELİRLEME SINAVI - 3 / KASIM / AYT",
+    "listeAdi": "Yoklama Listesi",
+    "tarih": "01.11.2026",
+    "saat": "09:30"
+  },
+
+  "bilgiKutusu": {
+    "goster": true,
+    "salon": true,
+    "ogrenciSayisi": true,
+    "tarihSaat": true,
+    "gozetmen": false
+  },
+
+  "sutunlar": {
+    "koltuk": false,
+    "ogrenciNo": true,
+    "adSoyad": true,
+    "sinif": false,
+    "kitapcik": false,
+    "ogrenciTelefonu": false,
+    "veliAdi": false,
+    "veliTelefonu": false,
+    "imza": true
+  },
+
+  "sutunBasliklari": {
+    "koltuk": "Koltuk",
+    "ogrenciNo": "Öğr. No",
+    "adSoyad": "Adı Soyadı",
+    "sinif": "Sınıf",
+    "kitapcik": "Kitapçık",
+    "ogrenciTelefonu": "Öğrenci Tel.",
+    "veliAdi": "Veli Adı Soyadı",
+    "veliTelefonu": "Veli Tel.",
+    "imza": "İmza"
+  },
+
+  "siralama": "ad",
+
+  "uyarilar": {
+    "goster": true,
+    "baslik": "SALON GÖZETMENİNİN DİKKATİNE!",
+    "maddeler": [
+      "Sınav saat **09:30**'da başlayacak ve **180 dakika** sürecektir. Sınav saat **12:30**'da tamamlanacaktır.",
+      "Sınavın **ilk 135 dakikası** ile **son 15 dakikası** arasında öğrencilerin sınavdan çıkması yasaktır. Bu saatler dışında öğrencilerin herhangi bir sebeple sınav salonundan ayrılmasına izin verilmeyecektir.",
+      "Öğrencilerin sınav başlamadan önce salonda boş bir sıra üzerinde, üzerlerinde bulunan **elektronik eşyaların toplanması** sağlanacaktır.",
+      "Öğrenciler optik form üzerinde **Ad, Soyad, Öğrenci No ve Kitapçık Türü** alanlarını eksiksiz olarak kodlamalıdır; aksi halde öğrencinin sınavı değerlendirmeye alınmayacaktır.",
+      "Sınav kitapçıkları sınav sonrasında toplanmayacaktır.",
+      "Salon gözetmeninin yoklama listesini öğrencilere imzalatarak yoklama almalı, daha sonra alt kısmı doldurup imzalayarak sınav koordinatörüne teslim etmelidir."
+    ]
+  },
+
+  "gozetmenImza": {
+    "goster": true,
+    "baslik": "Salon Gözetmeni",
+    "satirlar": ["Adı Soyadı :", "İmza :"]
+  },
+
+  "sayfa": {
+    "cerceve": true,
+    "altBilgi": "Sınav Salon Yoklama Listesi",
+    "sayfaNumarasi": true,
+    "olusturmaTarihi": true,
+    "yaziBoyutu": 9.5,
+    "zebra": true
+  },
+
+  "renkler": {
+    "koyu": "#1F3A5F",
+    "acik": "#EEF2F7",
+    "zebra": "#F7F9FC",
+    "cizgi": "#8A94A6"
+  },
+
+  "excelSutunlari": {
+    "adSoyad": "Ad Soyad",
+    "ogrenciNo": "Okul Numarası",
+    "sinif": "Sınıf",
+    "salon": "Salon adı",
+    "sira": "Sira",
+    "sutun": "Sütun",
+    "kitapcik": "Kitapcık türü",
+    "ogrenciTelefonu": "Öğrenci Telefonu",
+    "veliAdi": "Veli Adı Soyadı",
+    "veliTelefonu": "Veli Telefonu"
+  }
+}

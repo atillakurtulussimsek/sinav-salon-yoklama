@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sınav Salon Yoklama Listesi</title>
+<style>
+  :root {
+    --koyu: #1F3A5F; --acik: #EEF2F7; --cizgi: #d5dbe5; --metin: #1f2937;
+    --soluk: #6b7280; --hata: #b91c1c; --ok: #15803d; --bg: #f4f6fa;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+         color: var(--metin); background: var(--bg); }
+  header { background: var(--koyu); color: #fff; padding: 18px 24px; }
+  header h1 { margin: 0; font-size: 20px; font-weight: 600; }
+  header p { margin: 4px 0 0; font-size: 13px; opacity: .8; }
+  main { max-width: 960px; margin: 24px auto; padding: 0 16px; }
+  .kart { background: #fff; border: 1px solid var(--cizgi); border-radius: 10px;
+          padding: 18px 20px; margin-bottom: 16px; }
+  .kart h2 { margin: 0 0 14px; font-size: 15px; color: var(--koyu);
+             text-transform: uppercase; letter-spacing: .04em; }
+  .satir { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  input[type=text], input[type=number], input[type=color], textarea, select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--cizgi); border-radius: 6px;
+    font: inherit; font-size: 14px; background: #fff; }
+  input[type=color] { height: 38px; padding: 2px 4px; }
+  textarea { min-height: 150px; resize: vertical; line-height: 1.45; }
+  .kutular { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+  .kutular label { display: flex; align-items: center; gap: 6px; font-weight: 400; margin: 0; cursor: pointer; }
+  .ipucu { font-size: 12px; color: var(--soluk); margin-top: 6px; }
+  .dosya { border: 2px dashed var(--cizgi); border-radius: 8px; padding: 22px; text-align: center;
+           cursor: pointer; transition: .15s; background: var(--acik); }
+  .dosya:hover, .dosya.surukle { border-color: var(--koyu); background: #e4ebf5; }
+  .dosya input { display: none; }
+  .dosya strong { display: block; margin-top: 6px; color: var(--koyu); }
+  .alt { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  button { background: var(--koyu); color: #fff; border: 0; border-radius: 8px;
+           padding: 12px 26px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .55; cursor: wait; }
+  .mesaj { font-size: 14px; } .mesaj.hata { color: var(--hata); } .mesaj.ok { color: var(--ok); }
+  details summary { cursor: pointer; font-size: 15px; color: var(--koyu); font-weight: 600;
+                    text-transform: uppercase; letter-spacing: .04em; margin-bottom: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Sınav Salon Yoklama Listesi</h1>
+  <p>Excel yerleşim listesinden salon bazlı PDF yoklama listesi oluşturur.</p>
+</header>
+
+<main>
+<form id="form">
+  <div class="kart">
+    <h2>1. Excel Dosyası</h2>
+    <label class="dosya" id="dosyaAlani">
+      <input type="file" name="excel" id="excel" accept=".xlsx,.xlsm" required>
+      <span>Excel dosyasını buraya sürükleyin veya tıklayıp seçin</span>
+      <strong id="dosyaAdi">Dosya seçilmedi</strong>
+    </label>
+    <div class="ipucu">Gerekli sütunlar: Ad Soyad, Okul Numarası, Sınıf, Salon adı, Sira, Sütun.</div>
+  </div>
+
+  <div class="kart">
+    <h2>2. Sınav Bilgileri</h2>
+    <div class="satir">
+      <div><label>Kurum adı</label><input type="text" name="kurumAd" id="kurumAd"></div>
+      <div><label>Sınav adı</label><input type="text" name="sinavAd" id="sinavAd" required></div>
+      <div><label>Liste adı</label><input type="text" name="listeAdi" id="listeAdi"></div>
+      <div><label>Tarih</label><input type="text" name="tarih" id="tarih" placeholder="gg.aa.yyyy"></div>
+      <div><label>Saat</label><input type="text" name="saat" id="saat" placeholder="ss:dd"></div>
+    </div>
+  </div>
+
+  <div class="kart">
+    <h2>3. Tablo Sütunları</h2>
+    <div class="kutular" id="sutunKutulari"></div>
+    <div class="satir" style="margin-top:14px">
+      <div>
+        <label>Sıralama</label>
+        <select name="siralama" id="siralama">
+          <option value="ad">Ad Soyad (A→Z)</option>
+          <option value="koltuk">Koltuk (sıra-sütun)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="kart">
+    <h2>4. Bilgi Kutusu</h2>
+    <div class="kutular">
+      <label><input type="checkbox" id="bilgiGoster" checked> Bilgi kutusunu göster</label>
+      <label><input type="checkbox" id="bilgiSalon" checked> Salon</label>
+      <label><input type="checkbox" id="bilgiOgrenciSayisi" checked> Öğrenci sayısı</label>
+      <label><input type="checkbox" id="bilgiTarihSaat" checked> Tarih / Saat</label>
+      <label><input type="checkbox" id="bilgiGozetmen"> Gözetmen alanı</label>
+    </div>
+  </div>
+
+  <div class="kart">
+    <h2>5. Uyarılar</h2>
+    <div class="kutular" style="margin-bottom:12px">
+      <label><input type="checkbox" id="uyariGoster" checked> Uyarı kutusunu göster</label>
+    </div>
+    <div class="satir">
+      <div style="grid-column:1/-1"><label>Başlık</label><input type="text" name="uyariBaslik" id="uyariBaslik"></div>
+      <div style="grid-column:1/-1">
+        <label>Maddeler (her satır bir madde, <code>**kalın**</code> kullanılabilir)</label>
+        <textarea name="uyariMaddeler" id="uyariMaddeler"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="kart">
+    <details>
+      <summary>6. Gözetmen İmza ve Sayfa Ayarları</summary>
+      <div class="kutular" style="margin-bottom:12px">
+        <label><input type="checkbox" id="imzaGoster" checked> İmza bloğunu göster</label>
+        <label><input type="checkbox" id="cerceve" checked> Sayfa çerçevesi</label>
+        <label><input type="checkbox" id="sayfaNumarasi" checked> Sayfa numarası</label>
+        <label><input type="checkbox" id="olusturmaTarihi" checked> Oluşturma tarihi</label>
+        <label><input type="checkbox" id="zebra" checked> Zebra satırlar</label>
+      </div>
+      <div class="satir">
+        <div><label>İmza bloğu başlığı</label><input type="text" name="imzaBaslik" id="imzaBaslik"></div>
+        <div><label>İmza satırları (her satır bir alan)</label><textarea name="imzaSatirlar" id="imzaSatirlar" style="min-height:70px"></textarea></div>
+        <div><label>Altbilgi metni</label><input type="text" name="altBilgi" id="altBilgi"></div>
+        <div><label>Yazı boyutu</label><input type="number" name="yaziBoyutu" id="yaziBoyutu" step="0.5" min="7" max="14"></div>
+        <div><label>Ana renk</label><input type="color" name="renkKoyu" id="renkKoyu"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="kart alt">
+    <button type="submit" id="gonder">PDF Oluştur ve İndir</button>
+    <span class="mesaj" id="mesaj"></span>
+  </div>
+</form>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const BAYRAKLAR = ["bilgiGoster","bilgiSalon","bilgiOgrenciSayisi","bilgiTarihSaat","bilgiGozetmen",
+                   "uyariGoster","imzaGoster","cerceve","sayfaNumarasi","olusturmaTarihi","zebra"];
+
+async function ayarlariYukle() {
+  const a = await (await fetch("/api/ayarlar")).json();
+  $("kurumAd").value = a.kurum.ad;
+  $("sinavAd").value = a.sinav.ad;
+  $("listeAdi").value = a.sinav.listeAdi || "";
+  $("tarih").value = a.sinav.tarih || "";
+  $("saat").value = a.sinav.saat || "";
+  $("siralama").value = a.siralama === "koltuk" ? "koltuk" : "ad";
+
+  const b = a.bilgiKutusu || {};
+  $("bilgiGoster").checked = b.goster !== false;
+  $("bilgiSalon").checked = b.salon !== false;
+  $("bilgiOgrenciSayisi").checked = b.ogrenciSayisi !== false;
+  $("bilgiTarihSaat").checked = b.tarihSaat !== false;
+  $("bilgiGozetmen").checked = !!b.gozetmen;
+
+  const kutu = $("sutunKutulari");
+  kutu.innerHTML = "";
+  for (const [k, baslik] of Object.entries(a.sutunBasliklari)) {
+    const l = document.createElement("label");
+    l.innerHTML = `<input type="checkbox" data-sutun="${k}" ${a.sutunlar[k] ? "checked" : ""}> ${baslik}`;
+    kutu.appendChild(l);
+  }
+
+  const u = a.uyarilar || {};
+  $("uyariGoster").checked = u.goster !== false;
+  $("uyariBaslik").value = u.baslik || "";
+  $("uyariMaddeler").value = (u.maddeler || []).join("\n");
+
+  const i = a.gozetmenImza || {};
+  $("imzaGoster").checked = i.goster !== false;
+  $("imzaBaslik").value = i.baslik || "Salon Gözetmeni";
+  $("imzaSatirlar").value = (i.satirlar || []).join("\n");
+
+  const s = a.sayfa || {};
+  $("cerceve").checked = s.cerceve !== false;
+  $("sayfaNumarasi").checked = s.sayfaNumarasi !== false;
+  $("olusturmaTarihi").checked = s.olusturmaTarihi !== false;
+  $("zebra").checked = s.zebra !== false;
+  $("altBilgi").value = s.altBilgi || "";
+  $("yaziBoyutu").value = s.yaziBoyutu || 9.5;
+  $("renkKoyu").value = (a.renkler && a.renkler.koyu) || "#1F3A5F";
+}
+
+const alan = $("dosyaAlani"), excel = $("excel");
+excel.addEventListener("change", () => $("dosyaAdi").textContent = excel.files[0] ? excel.files[0].name : "Dosya seçilmedi");
+alan.addEventListener("dragover", e => { e.preventDefault(); alan.classList.add("surukle"); });
+alan.addEventListener("dragleave", () => alan.classList.remove("surukle"));
+alan.addEventListener("drop", e => {
+  e.preventDefault(); alan.classList.remove("surukle");
+  if (e.dataTransfer.files[0]) { excel.files = e.dataTransfer.files; excel.dispatchEvent(new Event("change")); }
+});
+
+$("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const mesaj = $("mesaj"), btn = $("gonder");
+  mesaj.className = "mesaj"; mesaj.textContent = "PDF hazırlanıyor…";
+  btn.disabled = true;
+
+  const fd = new FormData($("form"));
+  for (const id of BAYRAKLAR) fd.set(id, $(id).checked);
+  fd.set("sutunlar", JSON.stringify(
+    [...document.querySelectorAll("[data-sutun]")].filter(c => c.checked).map(c => c.dataset.sutun)));
+
+  try {
+    const r = await fetch("/api/olustur", { method: "POST", body: fd });
+    if (!r.ok) {
+      let hata = "Bir hata oluştu.";
+      try { hata = (await r.json()).detail || hata; } catch {}
+      throw new Error(hata);
+    }
+    const blob = await r.blob();
+    const ad = (r.headers.get("Content-Disposition") || "").match(/filename="(.+)"/)?.[1] || "yoklama.pdf";
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = decodeURIComponent(ad); a.click();
+    URL.revokeObjectURL(url);
+    const n = r.headers.get("X-Salon-Sayisi");
+    mesaj.className = "mesaj ok"; mesaj.textContent = n ? `${n} salon için PDF indirildi.` : "PDF indirildi.";
+  } catch (err) {
+    mesaj.className = "mesaj hata"; mesaj.textContent = err.message;
+  } finally { btn.disabled = false; }
+});
+
+ayarlariYukle().catch(() => { $("mesaj").className = "mesaj hata"; $("mesaj").textContent = "Varsayılan ayarlar yüklenemedi."; });
+</script>
+</body>
+</html>
